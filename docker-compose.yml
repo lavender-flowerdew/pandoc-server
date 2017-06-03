@@ -4,12 +4,14 @@ services:
   nginx:
     image: "lavenderflowerdew/alpine-nginx"
     environment:
-      - CLUSTER_CONF=nowfcgi~now~nowfcgi:9000;wylie~wylie~wylie:9000;
+      - CLUSTER_CONF=nowfcgi~now~nowfcgi:9000;wylie~wylie~wylie:9000;pandoc~pandoc~pandoc:9000;tex~tex~tex:9000;
     ports:
       - "80:80"
     links:
       - nowfcgi
       - wylie
+      - pandoc
+      - tex
     networks:
       - web_net
       - pandoc_net
@@ -29,6 +31,24 @@ services:
     image: "wylie:latest"
     ports:
       - "9001:9000"
+    networks:
+      - pandoc_net
+  pandoc:
+    build:
+      context: ${PWD}/pandoc
+      dockerfile: Dockerfile
+    image: "pandoc:latest"
+    ports:
+      - "9002:9000"
+    networks:
+      - pandoc_net
+  tex:
+    build:
+      context: ${PWD}/pandoc
+      dockerfile: Dockerfile
+    image: "tex:latest"
+    ports:
+      - "9003:9000"
     networks:
       - pandoc_net
 networks:
