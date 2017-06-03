@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  nginx:
+    image: "lavenderflowerdew/alpine-nginx"
+    environment:
+      - CLUSTER_CONF=fastcgi1~test~fastcgi1:9000;fastcgi2~test2~fastcgi2:9000;
+    ports:
+      - "80:80"
+    links:
+      - fastcgi1
+      - fastcgi2
+    networks:
+      - web_net
+      - pandoc_net
+  fastcgi1:
+    image: "lavenderflowerdew/alpine-perl-fastcgi"
+    ports:
+      - "9000:9000"
+    networks:
+      - pandoc_net
+  fastcgi2:
+    image: "lavenderflowerdew/alpine-perl-fastcgi"
+    ports:
+      - "9001:9000"
+    networks:
+      - pandoc_net
+networks:
+  web_net:
+  pandoc_net:
