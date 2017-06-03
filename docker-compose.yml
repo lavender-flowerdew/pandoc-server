@@ -4,16 +4,16 @@ services:
   nginx:
     image: "lavenderflowerdew/alpine-nginx"
     environment:
-      - CLUSTER_CONF=nowfastcgi~now~nowfastcgi:9000;fastcgi2~test2~fastcgi2:9000;
+      - CLUSTER_CONF=nowfcgi~now~nowfcgi:9000;wylie~wylie~wylie:9000;
     ports:
       - "80:80"
     links:
-      - nowfastcgi
-      - fastcgi2
+      - nowfcgi
+      - wylie
     networks:
       - web_net
       - pandoc_net
-  nowfastcgi:
+  nowfcgi:
     build:
       context: ${PWD}/now
       dockerfile: Dockerfile
@@ -22,8 +22,11 @@ services:
       - "9000:9000"
     networks:
       - pandoc_net
-  fastcgi2:
-    image: "lavenderflowerdew/alpine-perl-fastcgi"
+  wylie:
+    build:
+      context: ${PWD}/wylie
+      dockerfile: Dockerfile
+    image: "wylie:latest"
     ports:
       - "9001:9000"
     networks:
