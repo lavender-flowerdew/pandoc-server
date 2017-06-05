@@ -2,41 +2,76 @@
 use strict;
 use warnings;
 use utf8;
-use Config::Properties;
+use URI::Escape;
 
 my ($buffer, @pairs, $pair, $name, $value, %FORM, $cfh, $properties, $regex, $regex_builder, $str);
 
-binmode(STDOUT, ":utf8");
+createInputFile(readContent());
+compile();
+showPdf(readPdf());
 
-open $cfh, '<', '/home/flower/www/ini/c.ini' or die "unable to open property file";
-$properties = Config::Properties->new();
-$properties->load($cfh);
+sub readContent {
+  if ($ENV{'REQUEST_METHOD'} eq "POST"){
+     read(STDIN, $buffer, $ENV{'CONTENT_LENGTH'});
+  } else {
+     $buffer = $ENV{'QUERY_STRING'};
 
-if ($ENV{'REQUEST_METHOD'} eq "POST"){
-   read(STDIN, $buffer, $ENV{'CONTENT_LENGTH'});
-} else {
-   $buffer = $ENV{'QUERY_STRING'};
+     @pairs = split(/&/, $buffer);
+     foreach $pair (@pairs) {
+        ($name, $value) = split(/=/, $pair);
+        $value =~ tr/+/ /;
+        $value =~ s/%(..)/pack("C", hex($1))/eg;
+        $FORM{$name} = $value;
+     }
+
+     $str=uri_unescape($FORM{'str'});
+     $buffer=$str;
+  }
+  return $buffer;
 }
 
-@pairs = split(/&/, $buffer);
-foreach $pair (@pairs) {
-   ($name, $value) = split(/=/, $pair);
-   $value =~ tr/+/ /;
-   $value =~ s/%(..)/pack("C", hex($1))/eg;
-   $FORM{$name} = $value;
+sub createInputFile {
+  my $texContent = shift;
+
+  my $document = <<"END_MESSAGE";
+\\documentclass[12pt]{article}
+\\begin{document}
+$texContent
+\\end{document}
+END_MESSAGE
+
+  my $filename = '/home/flower/www/req.tex';
+  open(my $fh, '>', $filename) or die "Could not open file '$filename' $!";
+  print $fh $document;
+  close $fh;
 }
 
-$str=$FORM{'str'};
-#my $output = qx/date/;
+sub compile {
+  my $output = qx/pdflatex --shell-escape -output-directory=\/home\/flower\/www \/home\/flower\/www\/req.tex/;
+  return $output;
+}
 
-my %c = $properties->properties();
-my @cons = sort { length($b) <=> length($a) } keys %c;
-my @rex = map { quotemeta($_) } @cons;
-$regex_builder = join '|', @rex;
-$regex_builder = '(' . $regex_builder . ')';
-$regex = qr/$regex_builder/;
-$str =~ s/$regex/$c{$1}/g;
+sub readPdf {
+  my $file = "/home/flower/www/req.pdf";
+  my $pdf;
 
-print "Content-type:text/plain;charset=utf-8\n";
-print "Content-Language: bo\n\n";
-print "$str \n\n";
+  open (my $pfh, $file);
+  binmode $pfh;
+  while (<$pfh>){ $pdf .= $_; }
+  close ($pfh);
+  return $pdf;
+}
+
+sub showPdf {
+  my $pdf = shift;
+  my $file = shift || "new.pdf"; # if no name is given use this
+  my $method = shift || "Content-disposition:inline; filename='$file'"; # default method
+  my $size = length($pdf);
+
+  print "Content-Type: application/pdf\n";
+  print "Content-Length: $size\n";
+  print "$method\n";
+  print "Content-Transfer-Encoding: binary\n\n"; # blank line to separate headers
+
+  print $pdf;
+}

@@ -1,4 +1,4 @@
-FROM lavenderflowerdew/alpine-base:latest
+FROM pandoc-ghc
 
 LABEL maintainer "lavender.flowerdew@gmail.com"
 
@@ -23,7 +23,7 @@ RUN echo "@edge http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/reposito
     chmod -R +x /home/flower/bin/*.pl /home/flower/www/*.pl && \
     chown -R flower:flower /home/flower/www && \
     curl -L https://cpanmin.us | perl - App::cpanminus && \
-    cpanm Config::Properties
+    cpanm URI::Escape
 
 EXPOSE 9000
 

@@ -44,7 +44,7 @@ services:
       - pandoc_net
   tex:
     build:
-      context: ${PWD}/pandoc
+      context: ${PWD}/tex
       dockerfile: Dockerfile
     image: "tex:latest"
     ports:
