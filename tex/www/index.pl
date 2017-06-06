@@ -12,7 +12,8 @@ showPdf(readPdf());
 
 sub readContent {
   if ($ENV{'REQUEST_METHOD'} eq "POST"){
-     read(STDIN, $buffer, $ENV{'CONTENT_LENGTH'});
+     read(STDIN, $str, $ENV{'CONTENT_LENGTH'});
+     return uri_unescape($str);
   } else {
      $buffer = $ENV{'QUERY_STRING'};
 
@@ -25,9 +26,8 @@ sub readContent {
      }
 
      $str=uri_unescape($FORM{'str'});
-     $buffer=$str;
+     return $str;
   }
-  return $buffer;
 }
 
 sub createInputFile {

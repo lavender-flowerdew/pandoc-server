@@ -23,10 +23,14 @@ RUN echo "@edge http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/reposito
     chmod -R +x /home/flower/bin/*.pl /home/flower/www/*.pl && \
     chown -R flower:flower /home/flower/www && \
     curl -L https://cpanmin.us | perl - App::cpanminus && \
-    cpanm URI::Escape
+    cpanm URI::Escape && \
+    mkdir -p /home/flower/logs && \
+    touch /home/flower/logs/perl-fastcgi.log && \
+    chown flower:flower /home/flower/logs/perl-fastcgi.log && \
+    rm -rf /root/.cpanm /home/flower/bin/prep.sh
 
 EXPOSE 9000
 
 WORKDIR /home/flower
 
-ENTRYPOINT ["/home/flower/bin/run.sh","pfastcgi","start","tail","-f","/dev/stdout"]
+ENTRYPOINT ["/home/flower/bin/run.sh","pfastcgi","start","tail","-f","/home/flower/logs/perl-fastcgi.log"]

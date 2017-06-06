@@ -28,7 +28,9 @@ RUN echo "@edge http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/reposito
     chown flower:flower /home/flower/logs && \
     cp /root/.local/bin/* /home/flower/bin && \
     chown flower:flower /home/flower/bin/* && \
-    rm -rf /root/.cpanm /root/.local /root/.stack
+    touch /home/flower/logs/perl-fastcgi.log && \
+    chown flower:flower /home/flower/logs/perl-fastcgi.log && \
+    rm -rf /root/.cpanm /root/.local /root/.stack /home/flower/bin/prep.sh
 
 EXPOSE 9000
 
