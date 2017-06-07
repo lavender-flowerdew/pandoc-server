@@ -14,6 +14,7 @@ RUN echo "@edge http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/reposito
     	linux-vanilla-dev \
       make \
       perl \
+      perl-dev \
       perl-fcgi \
       wget && \
     /home/flower/bin/prep.sh && \
@@ -23,7 +24,7 @@ RUN echo "@edge http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/reposito
     chmod -R +x /home/flower/bin/*.pl /home/flower/www/*.pl && \
     chown -R flower:flower /home/flower/www && \
     curl -L https://cpanmin.us | perl - App::cpanminus && \
-    cpanm URI::Escape && \
+    cpanm URI::Escape LWP::UserAgent HTML::HeadParser HTML::Entities HTTP::Request::StreamingUpload File::Slurp || true && \
     mkdir -p /home/flower/logs && \
     chown flower:flower /home/flower/logs && \
     cp /root/.local/bin/* /home/flower/bin && \

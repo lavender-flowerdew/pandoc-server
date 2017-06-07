@@ -3,6 +3,10 @@ use strict;
 use warnings;
 use utf8;
 use URI::Escape;
+use HTTP::Request;
+use HTTP::Response;
+use File::Slurp;
+use LWP::UserAgent;
 
 my ($buffer, @pairs, $pair, $name, $value, %FORM, $str, $ifilename, $ofilename, $fh);
 
@@ -52,7 +56,7 @@ sub createInputFile {
 
 sub compile {
   my $format = shift;
-  my $o = qx/bash -c '\/home\/flower\/bin\/pandoc --from=markdown --to=$format --output=$ofilename $ifilename'/;
+  my $o = qx/bash -c '\/home\/flower\/bin\/pandoc -s --from=markdown --to=$format --output=$ofilename $ifilename'/;
   logit("common.pl", "Pandoc processing $o\n");
 }
 
@@ -68,5 +72,35 @@ sub showFile {
     }
   } else {
     logit("common.pl", "Unable to read file for processing\n");
+  }
+}
+
+sub toPDF {
+  logit("common.pl", "Reading latex\n");
+  my $ua = LWP::UserAgent->new;
+  my $uri = "http://nginx/tex/index";
+  my $req = HTTP::Request->new('POST', $uri);
+  $req->header('Content-Type' => 'text/latex');
+  my $resp = $ua->request($req);
+  my $txt = read_file($ofilename);
+  logit("common.pl", "$txt\n");
+  $req->content($txt);
+  logit("common.pl", "Read now sending\n");
+
+  my $resp = $ua->request($req);
+  binmode(STDOUT);
+  if ($resp->is_success) {
+    logit("common.pl", "Sent and have pdf\n");
+    print "Content-Type: application/pdf\n";
+    #print "Content-Length: $size\n";
+    print "Content-disposition:inline; filename='pandoc.pdf'";
+    print "Content-Transfer-Encoding: binary\n\n";
+    my $message = $resp->decoded_content;
+    print "$message";
+  } else {
+    logit("common.pl", "Sent but no pdf $resp->message\n");
+    print "Content-Type: text/plain\n\n";
+    print "HTTP POST error code: ", $resp->code, "\n";
+    print "HTTP POST error message: ", $resp->message, "\n";
   }
 }

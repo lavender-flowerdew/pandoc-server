@@ -34,10 +34,7 @@ sub createInputFile {
   my $texContent = shift;
 
   my $document = <<"END_MESSAGE";
-\\documentclass[12pt]{article}
-\\begin{document}
 $texContent
-\\end{document}
 END_MESSAGE
 
   my $filename = '/home/flower/www/req.tex';
@@ -47,7 +44,7 @@ END_MESSAGE
 }
 
 sub compile {
-  my $output = qx/pdflatex --shell-escape -output-directory=\/home\/flower\/www \/home\/flower\/www\/req.tex/;
+  my $output = qx/xelatex --shell-escape -output-directory=\/home\/flower\/www \/home\/flower\/www\/req.tex/;
   return $output;
 }
 

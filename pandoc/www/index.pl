@@ -13,10 +13,20 @@ if ($ENV{'HTTP_ACCEPT'}) {
     compile("asciidoc");
     showFile("text/plain; charset=utf-8");
   } elsif ($ENV{'HTTP_ACCEPT'} eq "application/pdf"){
+    compile("latex");
+    toPDF();
   } elsif ($ENV{'HTTP_ACCEPT'} eq "application/pdf+beamer"){
+    compile("latex");
+    toPDF();
   } elsif ($ENV{'HTTP_ACCEPT'} eq "application/pdf+xetex"){
+    compile("latex");
+    toPDF();
   } elsif ($ENV{'HTTP_ACCEPT'} eq "application/pdf+xelatex"){
+    compile("latex");
+    toPDF();
   } elsif ($ENV{'HTTP_ACCEPT'} eq "application/pdf+latex"){
+    compile("latex");
+    toPDF();
   } elsif ($ENV{'HTTP_ACCEPT'} eq "text/markdown+commonmark"){
     compile("commonmark");
     showFile("text/plain; charset=utf-8");
