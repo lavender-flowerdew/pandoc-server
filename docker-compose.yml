@@ -2,7 +2,10 @@ version: '3'
 
 services:
   nginx:
-    image: "lavenderflowerdew/alpine-nginx"
+    build:
+      context: ${PWD}/nginx
+      dockerfile: Dockerfile
+    image: "nginx:latest"
     environment:
       - CLUSTER_CONF=nowfcgi~now~nowfcgi:9000;wylie~wylie~wylie:9000;pandoc~pandoc~pandoc:9000;tex~tex~tex:9000;
     ports:
@@ -15,6 +18,8 @@ services:
     networks:
       - web_net
       - pandoc_net
+    volumes:
+      - ./www:/usr/html
   nowfcgi:
     build:
       context: ${PWD}/now

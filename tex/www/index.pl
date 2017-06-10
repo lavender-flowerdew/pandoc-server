@@ -67,8 +67,8 @@ sub showPdf {
 
   print "Content-Type: application/pdf\n";
   print "Content-Length: $size\n";
-  print "$method\n";
-  print "Content-Transfer-Encoding: binary\n\n"; # blank line to separate headers
+  print "$method\n\n";
+  #print "Content-Transfer-Encoding: binary\n\n"; # blank line to separate headers
 
   print $pdf;
 }

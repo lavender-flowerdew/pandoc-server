@@ -93,8 +93,8 @@ sub toPDF {
     logit("common.pl", "Sent and have pdf\n");
     print "Content-Type: application/pdf\n";
     #print "Content-Length: $size\n";
-    print "Content-disposition:inline; filename='pandoc.pdf'";
-    print "Content-Transfer-Encoding: binary\n\n";
+    print "Content-disposition:inline; filename='pandoc-leanne.pdf'\n\n";
+    #print "Content-Transfer-Encoding: binary\n\n";
     my $message = $resp->decoded_content;
     print "$message";
   } else {
