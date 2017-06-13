@@ -19,10 +19,11 @@ RUN echo "@edge http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/reposito
       perl \
       perl-dev \
       perl-fcgi \
+      gcc \
+      musl-dev \
       wget && \
     /home/flower/bin/prep.sh && \
     cd /home/flower && \
-    apk del linux-vanilla-dev && \
     rm -rf /usr/share/man /tmp/* /var/cache/apk/* && \
     chmod -R +x /home/flower/bin/*.pl /home/flower/www/*.pl && \
     chown -R flower:flower /home/flower/www && \
@@ -40,7 +41,8 @@ RUN echo "@edge http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/reposito
     ln -s /usr/src/pandoc/.stack-work/install/x86_64-linux/lts-8.12/8.0.2/bin/pandoc /usr/bin/pandoc && \
     ln -s /usr/src/pandoc/.stack-work/install/x86_64-linux/lts-8.12/8.0.2/bin/pandoc-citeproc /usr/bin/pandoc-citeproc && \
     ln -s /usr/src/pandoc/.stack-work/install/x86_64-linux/lts-8.12/8.0.2/bin/pandoc /home/flower/bin/pandoc && \
-    ln -s /usr/src/pandoc/.stack-work/install/x86_64-linux/lts-8.12/8.0.2/bin/pandoc-citeproc /home/flower/bin/pandoc-citeproc
+    ln -s /usr/src/pandoc/.stack-work/install/x86_64-linux/lts-8.12/8.0.2/bin/pandoc-citeproc /home/flower/bin/pandoc-citeproc && \
+    echo "Done"
 
 EXPOSE 9000
 
