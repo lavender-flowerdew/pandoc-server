@@ -1,25 +1,26 @@
 version: '3'
 
 services:
-  nginx:
+  editor:
     build:
-      context: ${PWD}/nginx
+      context: ${PWD}/editor
       dockerfile: Dockerfile
-    image: "nginx:latest"
+    image: "editor:latest"
     environment:
       - CLUSTER_CONF=nowfcgi~now~nowfcgi:9000;wylie~wylie~wylie:9000;pandoc~pandoc~pandoc:9000;tex~tex~tex:9000;
     ports:
       - "80:80"
-    links:
+    depends_on:
       - nowfcgi
       - wylie
       - pandoc
       - tex
     networks:
-      - web_net
-      - pandoc_net
-    volumes:
-      - ./www:/usr/html
+      pandoc_net:
+        aliases:
+          - editor
+          - nginx
+      web_net:
   nowfcgi:
     build:
       context: ${PWD}/now
@@ -28,7 +29,9 @@ services:
     ports:
       - "9000:9000"
     networks:
-      - pandoc_net
+      pandoc_net:
+        aliases:
+          - nowfcgi
   wylie:
     build:
       context: ${PWD}/wylie
@@ -37,7 +40,9 @@ services:
     ports:
       - "9001:9000"
     networks:
-      - pandoc_net
+      pandoc_net:
+        aliases:
+          - wylie
   pandoc:
     build:
       context: ${PWD}/pandoc
@@ -46,16 +51,20 @@ services:
     ports:
       - "9002:9000"
     networks:
-      - pandoc_net
+      pandoc_net:
+        aliases:
+          - pandoc
   tex:
     build:
       context: ${PWD}/tex
       dockerfile: Dockerfile
-    image: "tex:latest"
+    image: "now:latest"
     ports:
       - "9003:9000"
     networks:
-      - pandoc_net
+      pandoc_net:
+        aliases:
+          - tex
 networks:
   web_net:
   pandoc_net:

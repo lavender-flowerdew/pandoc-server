@@ -1,4 +1,4 @@
-FROM lavenderflowerdew/alpine-nginx
+FROM nginx-base
 
 MAINTAINER Lavender Flowerdew <lavender.flowerdew@gmail.com>
 
@@ -20,8 +20,6 @@ RUN chown -R nginx:www-data /usr/html && \
     mv -f ./pandoc-web-editor-master/vendor /usr/html/vendor && \
     mv -f ./pandoc-web-editor-master/post_index.json /usr/html/post_index.json && \
     mv -f ./pandoc-web-editor-master/index.html /usr/html/index.html
-
-VOLUME ["/usr/html"]
 
 ENTRYPOINT ["/root/run.sh"]
 
